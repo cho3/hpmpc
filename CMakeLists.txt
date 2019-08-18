@@ -15,7 +15,7 @@ project(hpmpc)
 set(TARGET C99_4X4)
 
 # use BLASFEO?
-set(USE_BLASFEO 1)
+set(USE_BLASFEO 0)
 set(BLASFEO_PATH ${PROJECT_SOURCE_DIR}/../blasfeo)
 
 # headers installation directory
@@ -259,8 +259,11 @@ configure_file(${PROJECT_SOURCE_DIR}/include/target.h.in
 	${CMAKE_CURRENT_SOURCE_DIR}/include/target.h @ONLY)
 
 # add library
-add_library(hpmpc STATIC ${HPMPC_SRC})
-target_link_libraries(hpmpc blasfeo)
+add_library(hpmpc SHARED ${HPMPC_SRC})  # LGPL isn't viral if the library is linked
+target_link_libraries(hpmpc m)
+if(${USE_BLASFEO} MATCHES 1)
+  target_link_libraries(hpmpc blasfeo)
+endif()
 
 install(TARGETS hpmpc EXPORT hpmpcConfig
 	LIBRARY DESTINATION lib
